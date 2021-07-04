@@ -1,25 +1,12 @@
 import React from 'react';
 import TasksList from '../components/organism/TasksList';
-
-const getTodos = `
-    query MyQuery {
-      getDueTodos {
-        categoryColor
-        categoryName
-        description
-        dueAt
-        id
-        title
-        status
-      }
-    }
-  `;
+import { getDueTodos } from '../queries';
 
 export default function DueTasks({ navigation }) {
   return (
     <TasksList
       navigation={navigation}
-      gqlQuery={getTodos}
+      gqlQuery={getDueTodos}
       queryType="getDueTodos"
       type="dueTasks"
     />

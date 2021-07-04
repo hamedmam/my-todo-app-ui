@@ -7,6 +7,7 @@ import Category from '../components/atoms/Category';
 import { transformDateToNumber } from './TaskCreation';
 import { useContext } from 'react';
 import { DataContext } from '../providers/DataProvider';
+import { getTodo, updateTodoById } from '../queries';
 
 const TaskDetails = ({ route }) => {
   const { tasks, setTasks } = useContext(DataContext);
@@ -21,43 +22,6 @@ const TaskDetails = ({ route }) => {
   const [isEditMode, setEditMode] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const { id } = route.params;
-
-  const getTodo = `
-    query MyQuery {
-      getTodo(id: "${id}") {
-        description
-        id
-        title
-        dueAt
-        categoryName
-        categoryColor
-      }
-    }
-  `;
-
-  const updateTodoById = ({
-    id,
-    title,
-    description,
-    dueAt,
-  }: {
-    id: string;
-    title: string;
-    description: string;
-    dueAt: number;
-  }) => `
-    mutation MyMutation {
-      updateTodo(description: "${description}", dueAt: ${dueAt}, id: "${id}", title: "${title}") {
-        categoryColor
-        categoryName
-        description
-        dueAt
-        id
-        title
-        status
-      }
-    }  
-  `;
 
   const { title, description, dueAt, categoryName, categoryColor } = task;
 
@@ -81,7 +45,7 @@ const TaskDetails = ({ route }) => {
   const getTask = async () => {
     try {
       setLoading(true);
-      const res = await API.graphql(graphqlOperation(getTodo));
+      const res = await API.graphql(graphqlOperation(getTodo(id)));
       setTask(res.data.getTodo);
       setLoading(false);
     } catch (err) {

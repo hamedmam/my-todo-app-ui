@@ -4,19 +4,7 @@ import { Layout, Spinner, Text } from '@ui-kitten/components';
 import { View, StyleSheet } from 'react-native';
 import TaskCard from '../components/molecules/TaskCard';
 import { ScrollView } from 'react-native';
-
-const getTodos = (categoryName: string) => `
-  query MyQuery {
-    getTodosByCategory(categoryName: "${categoryName}") {
-      description
-      id
-      title
-      dueAt
-      categoryName
-      categoryColor
-    }
-  }
-`;
+import { getTodosByCagtegory } from '../queries';
 
 export default function TasksByCategory({ route, navigation }) {
   const { categoryName } = route.params;
@@ -26,7 +14,9 @@ export default function TasksByCategory({ route, navigation }) {
   const getTasksByCategory = async () => {
     try {
       setLoading(true);
-      const res = await API.graphql(graphqlOperation(getTodos(categoryName)));
+      const res = await API.graphql(
+        graphqlOperation(getTodosByCagtegory(categoryName))
+      );
       setLoading(false);
       setCategoryTodos(res.data.getTodosByCategory);
     } catch (err) {

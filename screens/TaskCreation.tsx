@@ -15,6 +15,7 @@ import { API, graphqlOperation } from 'aws-amplify';
 import TaskCard from '../components/molecules/TaskCard';
 import { useContext } from 'react';
 import { DataContext } from '../providers/DataProvider';
+import { createTodo, getCategories } from '../queries';
 
 export const initCategories = [{ id: '', name: '', color: '' }];
 
@@ -26,41 +27,6 @@ export const transformDateToNumber = (date: Date) => {
   const day = setDateInNumber(date.getDate()).toString();
   return Number(year + month + day);
 };
-
-export const getCategories = `
-  query MyQuery {
-    getCategories {
-      id
-      name
-      color
-    }
-  }
-`;
-
-const createTask = ({
-  title,
-  description,
-  categoryName,
-  categoryColor,
-  dueAt,
-}: {
-  title: string;
-  description: string;
-  categoryName: string;
-  categoryColor: string;
-  dueAt: number;
-}) => `
-  mutation MyMutation {
-    createTodo(title: "${title}", description: "${description}", categoryName: "${categoryName}", categoryColor: "${categoryColor}", dueAt: ${dueAt}) {
-      id
-      description
-      title
-      dueAt
-      categoryName
-      categoryColor
-    }
-  }
-`;
 
 export default function TaskCreation() {
   const { tasks, dueTasks, setTasks, setDueTasks, categories, setCategories } =
@@ -95,12 +61,12 @@ export default function TaskCreation() {
 
   const { title, description, category, dueAt } = task;
 
-  const createTodo = async () => {
+  const createTask = async () => {
     try {
       const parsedDate = transformDateToNumber(dueAt);
       const res = await API.graphql(
         graphqlOperation(
-          createTask({
+          createTodo({
             title,
             description,
             categoryName: category.name,
@@ -197,7 +163,7 @@ export default function TaskCreation() {
         </Select>
         <Button
           disabled={!title || !description || !category.name}
-          onPress={() => createTodo()}
+          onPress={() => createTask()}
         >
           Create Todo
         </Button>

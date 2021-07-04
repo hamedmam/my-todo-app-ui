@@ -3,25 +3,10 @@ import { StyleSheet, View } from 'react-native';
 import { Layout, Card, Input, Button } from '@ui-kitten/components';
 import { ScrollView } from 'react-native';
 import { API, graphqlOperation } from 'aws-amplify';
-import { getCategories, initCategories } from './TaskCreation';
+import { initCategories } from './TaskCreation';
 import { DataContext } from '../providers/DataProvider';
 import Category from '../components/atoms/Category';
-
-const createNewCategory = ({
-  name,
-  color,
-}: {
-  name: string;
-  color: string;
-}) => `
-  mutation MyMutation {
-    createCategory(name: "${name}", color: "${color}") {
-      id
-      name
-      color
-    }
-  }
-`;
+import { createNewCategory, getCategories } from '../queries';
 
 export default function Categories({ navigation }) {
   const { categories, setCategories } = useContext(DataContext);

@@ -1,18 +1,6 @@
 import React from 'react';
 import TasksList from '../components/organism/TasksList';
-
-const getTodos = `
-  query MyQuery {
-    getTodos {
-      description
-      id
-      title
-      dueAt
-      categoryName
-      categoryColor
-    }
-  }
-`;
+import { getTodos } from '../queries';
 
 export default function TasksFeed({ navigation }) {
   return (
