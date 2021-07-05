@@ -111,7 +111,7 @@ function TabTwoNavigator() {
   return (
     <TabTwoStack.Navigator>
       <TabTwoStack.Screen
-        name="TabTwoScreen"
+        name="DueTasks"
         component={DueTasks}
         options={{ headerTitle: 'Due Tasks' }}
       />

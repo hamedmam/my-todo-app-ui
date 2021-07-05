@@ -1,10 +1,16 @@
 import React, { ReactNode, createContext, useState } from 'react';
 
+export enum Status {
+  todo = 'todo',
+  done = 'done',
+}
+
 export type Tasks = {
   description: string;
   id: string;
   title: string;
   dueAt: number;
+  status: Status;
   categoryName: string;
   categoryColor: string;
 }[];

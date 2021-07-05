@@ -1,8 +1,9 @@
 import React from 'react';
 import { Card, Text, Layout, Button } from '@ui-kitten/components';
-import { StyleProp, ViewStyle, View } from 'react-native';
+import { StyleProp, ViewStyle, View, StyleSheet } from 'react-native';
 import { API, graphqlOperation } from 'aws-amplify';
 import Category from '../../atoms/Category';
+import Status from '../../atoms/Status';
 import { useContext } from 'react';
 import { DataContext, Tasks } from '../../../providers/DataProvider';
 
@@ -11,20 +12,21 @@ export type TaskListType = 'dueTasks' | 'allTasks';
 const isDueTask = (dueTasks: Tasks, id: string) =>
   dueTasks.find((task) => task.id === id);
 
-type CategoryType = {
-  name: string;
-  color: string;
+type TaskPropsType = {
+  title: string;
+  description: string;
+  status: string;
+  dueAt: string;
+  id: string;
+  categoryName: string;
+  categoryColor: string;
 };
 
 type TaskCardType = {
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
-  title: string;
-  description: string;
-  dueAt: string;
-  id: string;
-  category: CategoryType;
+  taskProps: TaskPropsType;
   type?: TaskListType;
 };
 
@@ -37,12 +39,8 @@ const deleteTodoMutation = (id: string) => `
 const TaskCard = ({
   onPress,
   style,
-  title,
-  description,
-  dueAt,
-  id,
   disabled = false,
-  category = { name: '', color: 'white' },
+  taskProps,
   type,
 }: TaskCardType) => {
   const { tasks, dueTasks, setDueTasks, setTasks } = useContext(DataContext);
@@ -65,26 +63,32 @@ const TaskCard = ({
     }
   };
 
+  const { id, title, description, dueAt, status, categoryColor, categoryName } =
+    taskProps;
+
   return (
     <Card disabled={disabled} onPress={onPress} style={style}>
-      <Layout style={{ backgroundColor: 'transparent' }}>
-        <Layout
-          style={{ backgroundColor: 'transparent', flexDirection: 'row' }}
-        >
-          <Text style={{ flex: 8, marginBottom: 8 }} category="h6">
+      <View>
+        <View style={styles.wrapper}>
+          <Text style={styles.title} category="h6">
             {title}
           </Text>
-          <Layout style={{ flex: 2, marginLeft: 'auto' }}>
-            <Text style={{ marginBottom: 4 }} category="c1">
+          <Layout style={styles.dateWrapper}>
+            <Text style={styles.dateText} category="c1">
               <Text category="c2">Due at:</Text> {dueAt}
             </Text>
           </Layout>
-        </Layout>
-        <Text style={{ marginBottom: 16 }} category="s1">
-          {description}
-        </Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Category color={category.color} name={category.name} />
+        </View>
+        <View style={styles.descriptionWrapper}>
+          <Text style={styles.section} category="s1">
+            {description}
+          </Text>
+          <View style={[styles.section, styles.status]}>
+            <Status status={status} />
+          </View>
+        </View>
+        <View style={styles.categorySection}>
+          <Category color={categoryColor} name={categoryName} />
           {!disabled && (
             <Button
               onPress={() => deleteTodo(id)}
@@ -96,9 +100,39 @@ const TaskCard = ({
             </Button>
           )}
         </View>
-      </Layout>
+      </View>
     </Card>
   );
 };
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+  },
+  title: {
+    flex: 8,
+    marginBottom: 8,
+  },
+  dateWrapper: {
+    flex: 2,
+    marginLeft: 'auto',
+  },
+  dateText: {
+    marginBottom: 4,
+  },
+  descriptionWrapper: {
+    flexDirection: 'row',
+  },
+  section: {
+    marginBottom: 16,
+  },
+  status: {
+    paddingTop: 8,
+    marginLeft: 'auto',
+  },
+  categorySection: {
+    flexDirection: 'row',
+  },
+});
 
 export default TaskCard;

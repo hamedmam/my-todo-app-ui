@@ -1,37 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { API, graphqlOperation } from 'aws-amplify';
-import { Layout, Text, Button, Input, Datepicker } from '@ui-kitten/components';
+import {
+  Layout,
+  Text,
+  Button,
+  Input,
+  Datepicker,
+  CheckBox,
+} from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
 import { transformNumberToDate } from '../components/organism/TasksList';
 import Category from '../components/atoms/Category';
 import { transformDateToNumber } from './TaskCreation';
 import { useContext } from 'react';
-import { DataContext } from '../providers/DataProvider';
+import { DataContext, Status } from '../providers/DataProvider';
 import { getTodo, updateTodoById } from '../queries';
+import { todoDefaultState } from '../constants';
 
-const TaskDetails = ({ route }) => {
+const TaskDetails = ({ route }: { route: any }) => {
   const { tasks, setTasks } = useContext(DataContext);
-  const [task, setTask] = useState({
-    id: '',
-    title: '',
-    description: '',
-    dueAt: 20210101,
-    categoryName: '',
-    categoryColor: '',
-  });
+  const [task, setTask] = useState(todoDefaultState);
   const [isEditMode, setEditMode] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const { id } = route.params;
 
-  const { title, description, dueAt, categoryName, categoryColor } = task;
+  const { title, description, dueAt, status, categoryName, categoryColor } =
+    task;
 
   const updateTodo = async () => {
     try {
       setLoading(true);
       const res = await API.graphql(
-        graphqlOperation(updateTodoById({ id, title, description, dueAt }))
+        graphqlOperation(
+          updateTodoById({ status, id, title, description, dueAt })
+        )
       );
       const updateTaskIndex = tasks.findIndex((task) => task.id === id);
+
       const clonedTasks = [...tasks];
       clonedTasks[updateTaskIndex] = task;
       setTasks(clonedTasks);
@@ -58,10 +64,14 @@ const TaskDetails = ({ route }) => {
     getTask();
   }, [id]);
 
+  useEffect(() => {
+    setIsDone(task.status === Status.done);
+  }, [task.status]);
+
   const parsedDate = transformNumberToDate(task.dueAt);
 
   return isLoading ? (
-    <Layout level="3" />
+    <Layout style={styles.outerContainer} level="3" />
   ) : (
     <Layout level="3" style={styles.outerContainer}>
       <Layout level="3" style={styles.container}>
@@ -69,16 +79,16 @@ const TaskDetails = ({ route }) => {
           <Layout
             style={{ backgroundColor: 'transparent', flexDirection: 'row' }}
           >
-            <Text style={{ flex: 8, marginBottom: 8 }} category="h6">
+            <Text style={styles.title} category="h6">
               {title}
             </Text>
-            <Layout level="1" style={{ flex: 2, marginLeft: 'auto' }}>
-              <Text style={{ marginBottom: 4 }} category="c1">
+            <View style={styles.dateWrapper}>
+              <Text style={styles.text} category="c1">
                 <Text category="c2">Due at:</Text> {parsedDate.toDateString()}
               </Text>
-            </Layout>
+            </View>
           </Layout>
-          <Text style={{ marginBottom: 16 }} category="s1">
+          <Text style={styles.section} category="s1">
             {description}
           </Text>
           <View style={{ flexDirection: 'row' }}>
@@ -93,30 +103,46 @@ const TaskDetails = ({ route }) => {
             </Button>
           </View>
           {isEditMode && (
-            <View style={{ marginTop: 32 }}>
-              <Text style={{ marginBottom: 4 }} category="label">
+            <View style={styles.editSectionWrapper}>
+              <Text style={styles.text} category="label">
                 update title
               </Text>
               <Input
-                style={{ marginBottom: 16 }}
+                style={styles.section}
                 value={task.title}
                 onChangeText={(title) => setTask({ ...task, title })}
               />
-              <Text style={{ marginBottom: 4 }} category="label">
+              <Text style={styles.text} category="label">
                 update description
               </Text>
               <Input
-                style={{ marginBottom: 16 }}
+                style={styles.section}
                 value={description}
                 onChangeText={(description) =>
                   setTask({ ...task, description })
                 }
               />
-              <Text style={{ marginBottom: 4 }} category="label">
+              <Text style={styles.text} category="label">
+                update status
+              </Text>
+              <CheckBox
+                style={styles.section}
+                checked={isDone}
+                onChange={(nextChecked) => {
+                  setIsDone(nextChecked);
+                  setTask({
+                    ...task,
+                    status: nextChecked ? Status.done : Status.todo,
+                  });
+                }}
+              >
+                Done
+              </CheckBox>
+              <Text style={styles.text} category="label">
                 update date
               </Text>
               <Datepicker
-                style={{ marginBottom: 16 }}
+                style={styles.section}
                 date={parsedDate}
                 onSelect={(value) => {
                   const date = transformDateToNumber(value);
@@ -150,5 +176,22 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     width: '100%',
     maxWidth: 460,
+  },
+  dateWrapper: {
+    flex: 2,
+    marginLeft: 'auto',
+  },
+  section: {
+    marginBottom: 16,
+  },
+  title: {
+    flex: 8,
+    marginBottom: 8,
+  },
+  text: {
+    marginBottom: 4,
+  },
+  editSectionWrapper: {
+    marginTop: 32,
   },
 });

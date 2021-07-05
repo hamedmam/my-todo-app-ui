@@ -4,23 +4,21 @@ import { Layout, Spinner, Text } from '@ui-kitten/components';
 import { View, StyleSheet } from 'react-native';
 import TaskCard from '../components/molecules/TaskCard';
 import { ScrollView } from 'react-native';
-import { getTodosByCagtegory } from '../queries';
-import { transformNumberToDate } from '../components/organism/TasksList';
+import { getTodosByStatus } from '../queries';
 import { todosDefaultState } from '../constants';
+import { transformNumberToDate } from '../components/organism/TasksList';
 
-export default function TasksByCategory({ route, navigation }) {
-  const { categoryName } = route.params;
-  const [categoryTodos, setCategoryTodos] = useState(todosDefaultState);
+export default function TasksByStatus({ route, navigation }) {
+  const { status } = route.params;
+  const [statusTodos, setStatusTodos] = useState(todosDefaultState);
   const [isLoading, setLoading] = useState(true);
 
-  const getTasksByCategory = async () => {
+  const getTasksByStatus = async () => {
     try {
       setLoading(true);
-      const res = await API.graphql(
-        graphqlOperation(getTodosByCagtegory(categoryName))
-      );
+      const res = await API.graphql(graphqlOperation(getTodosByStatus(status)));
       setLoading(false);
-      setCategoryTodos(res.data.getTodosByCategory);
+      setStatusTodos(res.data.getTodosByStatus);
     } catch (err) {
       console.log(err);
       setLoading(false);
@@ -28,8 +26,8 @@ export default function TasksByCategory({ route, navigation }) {
   };
 
   useEffect(() => {
-    getTasksByCategory();
-  }, [categoryName]);
+    getTasksByStatus();
+  }, [status]);
 
   return isLoading ? (
     <Layout
@@ -41,9 +39,11 @@ export default function TasksByCategory({ route, navigation }) {
     >
       <Spinner size="giant" />
     </Layout>
-  ) : !categoryTodos.length ? (
+  ) : !statusTodos.length ? (
     <Layout level="3" style={styles.outerContainer}>
-      <Text style={styles.text}>No todos for this category</Text>
+      <Text style={{ marginTop: 16, alignSelf: 'center' }}>
+        No todos for this category
+      </Text>
     </Layout>
   ) : (
     <Layout level="3" style={styles.outerContainer}>
@@ -51,7 +51,7 @@ export default function TasksByCategory({ route, navigation }) {
         <Layout level="3">
           <View style={styles.container}>
             <View style={styles.innerWrapper}>
-              {categoryTodos.map((task, i) => {
+              {statusTodos.map((task, i) => {
                 const due = transformNumberToDate(task.dueAt);
                 return (
                   <TaskCard
@@ -62,7 +62,7 @@ export default function TasksByCategory({ route, navigation }) {
                     }
                     key={task.id}
                     style={{
-                      marginBottom: i === categoryTodos.length - 1 ? 0 : 8,
+                      marginBottom: i === statusTodos.length - 1 ? 0 : 8,
                     }}
                     type="allTasks"
                     taskProps={{ ...task, dueAt: due.toDateString() }}
@@ -84,10 +84,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 8,
     alignItems: 'center',
-  },
-  text: {
-    marginTop: 16,
-    alignSelf: 'center',
   },
   innerWrapper: {
     width: '100%',

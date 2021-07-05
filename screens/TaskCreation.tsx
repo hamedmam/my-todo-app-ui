@@ -16,6 +16,7 @@ import TaskCard from '../components/molecules/TaskCard';
 import { useContext } from 'react';
 import { DataContext } from '../providers/DataProvider';
 import { createTodo, getCategories } from '../queries';
+import { todoDefaultState } from '../constants';
 
 export const initCategories = [{ id: '', name: '', color: '' }];
 
@@ -35,12 +36,7 @@ export default function TaskCreation() {
     new IndexPath(0)
   );
   const selectedCategory = categories[selectedCategoryIndex.row];
-  const [task, setTask] = useState({
-    title: '',
-    description: '',
-    dueAt: new Date(),
-    category: selectedCategory,
-  });
+  const [task, setTask] = useState({ ...todoDefaultState, dueAt: new Date() });
 
   const getUserCategories = async () => {
     try {
@@ -56,10 +52,11 @@ export default function TaskCreation() {
   }, []);
 
   useEffect(() => {
-    setTask({ ...task, category: selectedCategory });
+    setTask({ ...task, categoryName, categoryColor });
   }, [selectedCategory]);
 
-  const { title, description, category, dueAt } = task;
+  const { id, title, status, description, dueAt, categoryName, categoryColor } =
+    task;
 
   const createTask = async () => {
     try {
@@ -69,8 +66,8 @@ export default function TaskCreation() {
           createTodo({
             title,
             description,
-            categoryName: category.name,
-            categoryColor: category.color,
+            categoryName,
+            categoryColor,
             dueAt: parsedDate,
           })
         )
@@ -113,12 +110,14 @@ export default function TaskCreation() {
         <TaskCard
           disabled={true}
           style={styles.section}
-          title={task.title}
-          description={task.description}
-          dueAt={task.dueAt.toDateString()}
-          category={{
-            name: selectedCategory?.name,
-            color: task.category?.color?.toLowerCase(),
+          taskProps={{
+            id,
+            title,
+            description,
+            status,
+            dueAt: dueAt.toDateString(),
+            categoryColor,
+            categoryName: selectedCategory?.name,
           }}
         />
 
@@ -162,7 +161,7 @@ export default function TaskCreation() {
           ))}
         </Select>
         <Button
-          disabled={!title || !description || !category.name}
+          disabled={!title || !description || !categoryName}
           onPress={() => createTask()}
         >
           Create Todo

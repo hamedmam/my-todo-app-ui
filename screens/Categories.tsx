@@ -47,11 +47,7 @@ export default function Categories({ navigation }) {
               <View style={{ flexDirection: 'row' }}>
                 {categories.map(({ id, name, color }) => (
                   <View key={id} style={{ marginRight: 8 }}>
-                    <Category
-                      navigation={navigation}
-                      name={name}
-                      color={color}
-                    />
+                    <Category name={name} color={color} />
                   </View>
                 ))}
               </View>

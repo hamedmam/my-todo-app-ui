@@ -20,7 +20,7 @@ export type TabOneParamList = {
 };
 
 export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+  DueTasks: undefined;
 };
 
 export type TabThreeParamList = {

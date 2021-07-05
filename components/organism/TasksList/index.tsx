@@ -53,18 +53,13 @@ const TasksList = ({ queryType, navigation, gqlQuery, type }: TaskList) => {
   return isLoading ? (
     <Layout
       level="3"
-      style={[
-        styles.outerContainer,
-        { alignItems: 'center', justifyContent: 'center' },
-      ]}
+      style={[styles.outerContainer, styles.loadingOuterContainer]}
     >
       <Spinner size="giant" />
     </Layout>
   ) : !renderingTasks.length ? (
     <Layout level="3" style={styles.outerContainer}>
-      <Text style={{ marginTop: 16, alignSelf: 'center' }}>
-        You are all set, nothing to do :)
-      </Text>
+      <Text style={styles.text}>You are all set, nothing to do :)</Text>
     </Layout>
   ) : (
     <Layout level="3" style={styles.outerContainer}>
@@ -72,43 +67,24 @@ const TasksList = ({ queryType, navigation, gqlQuery, type }: TaskList) => {
         <Layout level="3">
           <View style={styles.container}>
             <View style={styles.innerWrapper}>
-              {renderingTasks.map(
-                (
-                  {
-                    id,
-                    title,
-                    description,
-                    dueAt,
-                    categoryName,
-                    categoryColor,
-                  },
-                  i
-                ) => {
-                  const due = transformNumberToDate(dueAt);
-                  return (
-                    <TaskCard
-                      onPress={() =>
-                        navigation.navigate('TaskDetails', {
-                          id,
-                        })
-                      }
-                      key={id}
-                      style={{
-                        marginBottom: i === renderingTasks.length - 1 ? 0 : 8,
-                      }}
-                      type={type}
-                      title={title}
-                      id={id}
-                      description={description}
-                      dueAt={due.toDateString()}
-                      category={{
-                        name: categoryName,
-                        color: categoryColor,
-                      }}
-                    />
-                  );
-                }
-              )}
+              {renderingTasks.map((task, i) => {
+                const due = transformNumberToDate(task.dueAt);
+                return (
+                  <TaskCard
+                    onPress={() =>
+                      navigation.navigate('TaskDetails', {
+                        id: task.id,
+                      })
+                    }
+                    key={task.id}
+                    style={{
+                      marginBottom: i === renderingTasks.length - 1 ? 0 : 8,
+                    }}
+                    type={type}
+                    taskProps={{ ...task, dueAt: due.toDateString() }}
+                  />
+                );
+              })}
             </View>
           </View>
         </Layout>
@@ -122,6 +98,10 @@ const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
   },
+  loadingOuterContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     padding: 8,
     alignItems: 'center',
@@ -129,5 +109,9 @@ const styles = StyleSheet.create({
   innerWrapper: {
     width: '100%',
     maxWidth: 460,
+  },
+  text: {
+    marginTop: 16,
+    alignSelf: 'center',
   },
 });

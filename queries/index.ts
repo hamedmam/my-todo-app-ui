@@ -1,9 +1,11 @@
+import { Status } from './../providers/DataProvider/index';
 const getTodos = `
   query MyQuery {
     getTodos {
       description
       id
       title
+      status
       dueAt
       categoryName
       categoryColor
@@ -32,6 +34,21 @@ const getTodosByCagtegory = (categoryName: string) => `
       id
       title
       dueAt
+      status
+      categoryName
+      categoryColor
+    }
+  }
+`;
+
+const getTodosByStatus = (status: string) => `
+  query MyQuery {
+    getTodosByStatus(status: "${status}") {
+      description
+      id
+      title
+      dueAt
+      status
       categoryName
       categoryColor
     }
@@ -44,6 +61,7 @@ query MyQuery {
     description
     id
     title
+    status
     dueAt
     categoryName
     categoryColor
@@ -56,14 +74,16 @@ const updateTodoById = ({
   title,
   description,
   dueAt,
+  status,
 }: {
   id: string;
   title: string;
   description: string;
   dueAt: number;
+  status: Status;
 }) => `
   mutation MyMutation {
-    updateTodo(description: "${description}", dueAt: ${dueAt}, id: "${id}", title: "${title}") {
+    updateTodo(description: "${description}", dueAt: ${dueAt}, id: "${id}", title: "${title}", status: "${status}") {
       categoryColor
       categoryName
       description
@@ -130,6 +150,7 @@ export {
   getTodos,
   getDueTodos,
   getTodosByCagtegory,
+  getTodosByStatus,
   getTodo,
   updateTodoById,
   getCategories,
