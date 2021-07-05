@@ -1,5 +1,3 @@
-https://my-serverless-todo-app.netlify.app/
-
 ---
 title: Expo CLI
 maxHeadingDepth: 4
