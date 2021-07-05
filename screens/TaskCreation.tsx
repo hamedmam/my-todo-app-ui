@@ -52,11 +52,14 @@ export default function TaskCreation() {
   }, []);
 
   useEffect(() => {
-    setTask({ ...task, categoryName, categoryColor });
+    setTask({
+      ...task,
+      categoryName: selectedCategory?.name,
+      categoryColor: selectedCategory?.color,
+    });
   }, [selectedCategory]);
 
-  const { id, title, status, description, dueAt, categoryName, categoryColor } =
-    task;
+  const { title, description, categoryColor, categoryName, dueAt } = task;
 
   const createTask = async () => {
     try {
@@ -111,13 +114,8 @@ export default function TaskCreation() {
           disabled={true}
           style={styles.section}
           taskProps={{
-            id,
-            title,
-            description,
-            status,
+            ...task,
             dueAt: dueAt.toDateString(),
-            categoryColor,
-            categoryName: selectedCategory?.name,
           }}
         />
 

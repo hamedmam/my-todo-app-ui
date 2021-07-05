@@ -142,6 +142,7 @@ const createTodo = ({
       dueAt
       categoryName
       categoryColor
+      status
     }
   }
 `;
