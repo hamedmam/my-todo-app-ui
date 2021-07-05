@@ -3,13 +3,7 @@ require('regenerator-runtime/runtime');
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: [
-      'babel-preset-expo',
-      {
-        useBuiltIns: 'entry',
-        corejs: 3,
-      },
-    ],
+    presets: ['babel-preset-expo'],
 
     plugins: ['react-native-reanimated/plugin'],
   };
