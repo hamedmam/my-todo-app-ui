@@ -59,7 +59,11 @@ const TasksList = ({ queryType, navigation, gqlQuery, type }: TaskList) => {
     </Layout>
   ) : !renderingTasks.length ? (
     <Layout level="3" style={styles.outerContainer}>
-      <Text style={styles.text}>You are all set, nothing to do :)</Text>
+      <Text style={styles.text}>
+        {type === 'dueTasks'
+          ? 'nothing is due for today'
+          : 'You are all set, nothing to do :)'}
+      </Text>
     </Layout>
   ) : (
     <Layout level="3" style={styles.outerContainer}>
