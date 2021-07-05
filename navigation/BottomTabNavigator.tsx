@@ -21,6 +21,7 @@ import {
   TabTwoParamList,
 } from '../types';
 import TaskStackNavigator from './TaskStackNavigator';
+import Logout from '../components/atoms/Logout';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -71,6 +72,7 @@ export default function BottomTabNavigator() {
         component={TabFourNavigator}
         options={{
           title: 'Add Task',
+
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="add-task" color={color} />
           ),
@@ -99,7 +101,10 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TasksFeed"
         component={TaskStackNavigator}
-        options={{ headerTitle: 'Tasks' }}
+        options={{
+          headerTitle: 'Tasks',
+          headerRight: Logout,
+        }}
       />
     </TabOneStack.Navigator>
   );
@@ -113,7 +118,7 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="DueTasks"
         component={DueTasks}
-        options={{ headerTitle: 'Due Tasks' }}
+        options={{ headerTitle: 'Due Tasks', headerRight: Logout }}
       />
     </TabTwoStack.Navigator>
   );
@@ -127,7 +132,7 @@ function TabThreeNavigator() {
       <TabThree.Screen
         name="Categories"
         component={Categories}
-        options={{ headerTitle: 'Categories' }}
+        options={{ headerTitle: 'Categories', headerRight: Logout }}
       />
     </TabThree.Navigator>
   );
@@ -141,7 +146,7 @@ function TabFourNavigator() {
       <TabFour.Screen
         name="TaskCreation"
         component={TaskCreation}
-        options={{ headerTitle: 'Create Task' }}
+        options={{ headerTitle: 'Create Task', headerRight: Logout }}
       />
     </TabFour.Navigator>
   );
