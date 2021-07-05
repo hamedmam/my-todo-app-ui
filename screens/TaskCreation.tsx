@@ -100,7 +100,7 @@ export default function TaskCreation() {
               alignItems: 'center',
             }}
           >
-            <Text>To Create tasks we first need to crate a category :) </Text>
+            <Text>To create tasks we first need to crate a category :) </Text>
           </View>
         </Layout>
       </Layout>

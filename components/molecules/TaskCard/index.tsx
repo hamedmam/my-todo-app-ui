@@ -25,7 +25,7 @@ type TaskCardType = {
   dueAt: string;
   id: string;
   category: CategoryType;
-  type: TaskListType;
+  type?: TaskListType;
 };
 
 const deleteTodoMutation = (id: string) => `
