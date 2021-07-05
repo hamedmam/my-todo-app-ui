@@ -1,4 +1,6 @@
-module.exports = function(api) {
+require('regenerator-runtime/runtime');
+
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
